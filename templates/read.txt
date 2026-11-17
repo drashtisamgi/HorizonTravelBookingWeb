@@ -1,1 +1,0 @@
-all the html files live in this folder
