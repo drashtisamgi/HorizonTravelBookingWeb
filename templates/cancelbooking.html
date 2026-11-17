@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+  <title>Cancel Booking - Horizon Travel</title>
+</head>
+<body>
+  <div class="header">
+    <img src="{{ url_for('static', filename='logo.png') }}" width="75px" height="75px">
+    <h1> Horizon Travel </h1>
+  </div>
+  <div class="topnav">
+    <a href="/">Logout</a>
+    <a href="/dashboard">Dashboard</a>
+</div> 
+
+  <div class="cancel-booking">
+    <h2>Cancel Your Booking</h2>
+
+    <div class="card">
+      <h3>Booking Details</h3>
+      <p><strong>Booking ID:</strong> {{ bookinginfo[0] }}</p>
+      <p><strong>Booking Date:</strong> {{ bookinginfo[10] }}</p>
+      <p><strong>From Date:</strong> {{ bookinginfo[7] }}</p>
+      <p><strong>To Date:</strong> {{ bookinginfo[8] }}</p>
+      <p><strong>Arrival:</strong> {{ bookinginfo[5] }}</p>
+      <p><strong>Departure:</strong>{{ bookinginfo[4] }}</p>
+      <p><strong>Cancellation Charge:</strong>{{ cancelcharge }}</p>
+
+      <h4>Are you sure you want to cancel this booking?</h4>
+      <h4>Cancellation Policy: Booking cancellation before 60 days of booking date does not result in cancellation charges. Booking
+        cancellation between 30 and 60 days of booking date will result in charges up to 40% of your booking price. Within
+        30 days of booking date 100% of your booking price will be charged.</h4>
+
+        <form action="/cancel" method="POST">
+          <label for="fname">Enter Booking ID:</label><br>
+          <input type="text" name="booking_id" id="booking_id">
+          <button type="submit" class="button">Confirm Cancellation</button>
+        </form>
+    </div>
+  </div>
+
+</body>
+</html>
+<!--Name: Drashti Samgi - Student Number: 24009943-->

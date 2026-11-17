@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+  <title>Dashboard</title>
+</head>
+<body>
+  <div class="header">
+    <img src="{{ url_for('static', filename='logo.png') }}" width="75px" height="75px">
+      <h1> Horizon Travel </h1>
+    </div>
+    <div class="topnav">
+      <a href="/">Home</a>
+      <a href="/">Logout</a>
+  </div> 
+
+  <div class="dashboard">
+    <h2>Welcome {{ user.Email }}</h2>
+
+    <button class="button" onclick="document.location='/flights'">Book a Journey</button>
+
+    <h2>Update Your Profile</h2>
+      <form method="POST" action="/update_password">
+        <input type="hidden" name="update_user" value="1">
+        <label>Email:</label>
+        <input type="email" name="email" value="enter email" required><br><br>
+        <label>New Password (leave blank to keep current):</label>
+        <input type="password" name="password"><br><br>
+        <button type="submit">Update Profile</button>
+      </form>
+      <h3>Your Bookings</h3>
+      <table>
+        <tr>
+          <th><b>Booking ID</b></th>
+          <th><b>Departure</b></th>
+          <th><b>Arrival</b></th>
+          <th><b>Class</b></th>
+          <th><b>Departure Time</b></th>
+          <th><b>Arrival Time</b></th>
+          <th><b>Seat (if chosen)</b></th>
+          <th><b>Price</b></th>
+          <th><b>Booking Date</b></th>
+        </tr>
+        <tbody>
+          
+          {% for booking in bookings %}
+          <tr>
+            <td>{{ booking[0] }}</td>  
+            <td>{{ booking[1] }}</td>  
+            <td>{{ booking[2] }}</td>
+            <td>{{ booking[3] }}</td>  
+            <td>{{ booking[4] }}</td>  
+            <td>{{ booking[5] }}</td>  
+            <td>{{ booking[6] }}</td>  
+            <td>{{ booking[7] }}</td>  
+            <td>{{ booking[8] }}</td>  
+          </tr>
+          {% endfor %}
+      </tbody>
+      </table>
+
+    <div class="card">
+      <h3>Cancel Booking</h3>
+      <form action="/cancel" style="display:inline;" method="POST">
+        <label for="fname">Enter Booking ID:</label><br>
+        <input type="text" name="booking_id" id="booking_id">
+        <button href="/cancel" class="btn">Cancel</a>
+      </form>
+    </div>
+
+</body>
+</html>
+<!--Name: Drashti Samgi - Student Number: 24009943-->
+
