@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+  <div class="header">
+    <img src="{{ url_for('static', filename='logo.png') }}" width="75px" height="75px">
+      <h1> Horizon Travel </h1>
+    </div>
+    <div class="topnav">
+      <a href="/">Logout</a>
+      <a href="/">Home</a>
+  </div>  
+    <div class="planeimg">
+      <p>.</p>
+    </div>
+    <h2>Welcome Admin</h2>
+    <div class="row">
+      <div class="column">
+        <div class="card">
+          <h3>Manage Destinations/Users</h3>
+          <button type="button" class="block" onclick="document.location='/manage_destinations'">Manage Users and Destinations</button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column">
+        <h3>Generate Admin reports</h3>
+        <button type="button" class="block" onclick="document.location='/admin_reports'">Generate reports</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column">
+        <h3>Bookings</h3>
+        <table>
+        <tr>
+          <th><b>Booking ID</b></th>
+          <th><b>Departure</b></th>
+          <th><b>Arrival</b></th>
+          <th><b>Class</b></th>
+          <th><b>Departure Time</b></th>
+          <th><b>Arrival Time</b></th>
+          <th><b>Seat (if chosen)</b></th>
+          <th><b>Price</b></th>
+          <th><b>Booking Date</b></th>
+        </tr>
+        <tbody>
+          
+          {% for booking in bookings %}
+          <tr>
+            <td>{{ booking[0] }}</td>  
+            <td>{{ booking[1] }}</td>  
+            <td>{{ booking[2] }}</td>
+            <td>{{ booking[3] }}</td>  
+            <td>{{ booking[4] }}</td>  
+            <td>{{ booking[5] }}</td>  
+            <td>{{ booking[6] }}</td>  
+            <td>{{ booking[7] }}</td>  
+            <td>{{ booking[8] }}</td>  
+          </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+
+        <div class="card">
+        <h3>Delete Booking</h3>
+        <form action="/cancel" style="display:inline;" method="POST">
+         <label for="fname">Enter Booking ID:</label><br>
+          <input type="text" name="booking_id" id="booking_id">
+          <button href="/cancel" class="btn">Delete</a>
+        </form>
+        </div>
+      </div>
+    </div>
+</body>
+</html>
+<!--Name: Drashti Samgi - Student Number: 24009943-->

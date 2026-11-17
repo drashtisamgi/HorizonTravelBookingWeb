@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const fromDate = document.getElementById("from-date");
+      const toDate = document.getElementById("to-date");
+  
+      const today = new Date().toISOString().split("T")[0];
+      fromDate.min = today;
+  
+      fromDate.addEventListener("change", function () {
+        toDate.min = fromDate.value;
+        checkWeekend(fromDate);
+      });
+  
+      toDate.addEventListener("change", function () {
+        fromDate.max = toDate.value;
+        checkWeekend(toDate);
+      });
+  
+      function checkWeekend(dateInput) {
+        const selectedDate = new Date(dateInput.value + "T00:00");
+        const day = selectedDate.getDay();
+        if (day === 0 || day === 6) {
+          alert("Weekends are not allowed. Please select a weekday.");
+          dateInput.value = "";
+        }
+      }
+  
+      const flightRoutes = {
+        "Birmingham": ["Newcastle"],
+        "Bristol": ["Glasgow", "Manchester", "Newcastle", "London"],
+        "Cardiff": ["Edinburgh"],
+        "Dundee": ["Portsmouth"],
+        "Glasgow": ["Newcastle"],
+        "London": ["Manchester"],
+        "Manchester": ["Bristol", "Glasgow", "London", "Southampton"],
+        "Newcastle": ["Birmingham", "Bristol", "Manchester"],
+        "Portsmouth": ["Dundee", "Aberdeen"],
+        "Southampton": ["Manchester"],
+        "Edinburgh": ["Cardiff"],
+        "Aberdeen": ["Portsmouth"],
+      };
+  
+      const departureSelect = document.getElementById("departure");
+      const arrivalSelect = document.getElementById("arrival");
+  
+      function updateArrivalOptions() {
+        const selectedDeparture = departureSelect.value;
+        arrivalSelect.innerHTML = '<option value="">Select Arrival</option>';
+  
+        if (selectedDeparture && flightRoutes[selectedDeparture]) {
+          flightRoutes[selectedDeparture].forEach((destination) => {
+            const option = document.createElement("option");
+            option.value = destination;
+            option.textContent = destination;
+            arrivalSelect.appendChild(option);
+          });
+        }
+  
+        filterTable();
+      }
+  
+      departureSelect.addEventListener("change", updateArrivalOptions);
+  
+      const table = document.getElementById("flightsTable");
+      const rows = table.getElementsByTagName("tr");
+  
+      function filterTable() {
+        const depFilter = departureSelect.value.toUpperCase();
+        const arrFilter = arrivalSelect.value.toUpperCase();
+  
+        for (let i = 1; i < rows.length; i++) {
+          const depCell = rows[i].getElementsByTagName("td")[0];
+          const arrCell = rows[i].getElementsByTagName("td")[1];
+  
+          if (depCell && arrCell) {
+            const depText = depCell.textContent.toUpperCase();
+            const arrText = arrCell.textContent.toUpperCase();
+  
+            if (
+              (!depFilter || depText.includes(depFilter)) &&
+              (!arrFilter || arrText.includes(arrFilter))
+            ) {
+              rows[i].style.display = "";
+            } else {
+              rows[i].style.display = "none";
+            }
+          }
+        }
+      }
+  
+      departureSelect.addEventListener("change", filterTable);
+      arrivalSelect.addEventListener("change", filterTable);
+  
+      const seatBookingCheckbox = document.getElementById("seat-booking");
+      const seatSelectionDropdown = document.getElementById("seat-selection");
+      const classSelect = document.getElementById("class");
+  
+      seatSelectionDropdown.style.display = "none";
+      seatBookingCheckbox.addEventListener("change", function () {
+        if (seatBookingCheckbox.checked) {
+          seatSelectionDropdown.style.display = "block";
+          populateSeats();
+        } else {
+          seatSelectionDropdown.style.display = "none";
+        }
+      });
+
+  
+      function populateSeats() {
+        const selectedClass = classSelect.value;
+        const totalSeats = 130;
+        const businessSeats = Math.floor(totalSeats * 0.2);
+        const economySeats = totalSeats - businessSeats;
+        const seatOptions = seatSelectionDropdown;
+  
+        seatOptions.innerHTML = '<option value="">Select a seat</option>';
+  
+        if (selectedClass === "Business") {
+          for (let i = 1; i <= businessSeats; i++) {
+            const option = document.createElement("option");
+            option.value = `B${i}`;
+            option.textContent = `Business ${i}`;
+            seatOptions.appendChild(option);
+          }
+        } else {
+          for (let i = 1; i <= economySeats; i++) {
+            const option = document.createElement("option");
+            option.value = `E${i}`;
+            option.textContent = `Economy ${i}`;
+            seatOptions.appendChild(option);
+          }
+        }
+      }
+  
+      const form = document.getElementById("flight-form");
+  
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        populateSeats();
+        form.submit(); 
+      });
+    });
+  </script>
+    <div class="header">
+      <img src="{{ url_for('static', filename='logo.png') }}" width="75px" height="75px">
+        <h1> Horizon Travel </h1>
+      </div>
+      <div class="topnav">
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+        <a href="/signup">Sign-up</a>
+      </div> 
+      <main>
+        <div class="planeimg">
+          <p>.</p>
+        </div>
+        <form method="post" action="/flights" id="flight-form">
+          <label for="From:">Departure</label>
+          <select id="departure" name="departure" required>
+            <option value="Birmingham">Birmingham</option>
+            <option value="Bristol">Bristol</option>
+            <option value="Cardiff">Cardiff</option>
+            <option value="Dundee">Dundee</option>
+            <option value="Glasgow">Glasgow</option>
+            <option value="London">London</option>
+            <option value="Manchester">Manchester</option>
+            <option value="Newcastle">Newcastle</option>
+            <option value="Portsmouth">Portsmouth</option>
+            <option value="Southampton">Southampton</option>
+            <option value="Edinburgh">Edinburgh</option>
+            <option value="Aberdeen">Aberdeen</option>
+        </select>
+
+        <label for="To:">Arrival</label>
+        <select id="arrival" name="arrival" required>
+          <option value="Birmingham">Birmingham</option>
+          <option value="Bristol">Bristol</option>
+          <option value="Cardiff">Cardiff</option>
+          <option value="Dundee">Dundee</option>
+          <option value="Glasgow">Glasgow</option>
+          <option value="London">London</option>
+          <option value="Manchester">Manchester</option>
+          <option value="Newcastle">Newcastle</option>
+          <option value="Portsmouth">Portsmouth</option>
+          <option value="Southampton">Southampton</option>
+          <option value="Edinburgh">Edinburgh</option>
+          <option value="Aberdeen">Aberdeen</option>
+        </select>
+
+         <label for="seat-booking">Would you like to book a seat?</label>
+         <input type="checkbox" id="seat-booking" name="seat-booking">
+         
+          <select id="seat-selection" style="display: none;" name="seat-selection">
+            <option value="">Select a seat</option>
+          </select>
+        
+        <label for="Class:">Class</label>
+          <select id="class" name="class" required>
+            <option value="Economy">Economy Class</option>.
+            <option value="Business">Business Class</option>
+          </select>  
+
+        <label for="Passengers:">Passengers</label>
+        <input type="number" name="passengers" min="1" max="10" step="1" required>
+
+        <label for="from-date">From:</label>
+        <input type="date" id="from-date" name="from-date" required>
+          
+        <label for="to-date">To:</label>
+        <input type="date" id="to-date" name="to-date" required>
+
+        <button class="button" type="submit" >book now</button>
+      </form>
+      <p>Note: All prices are displayed as the price per person.</p>
+      <table id="flightsTable">
+        <tr>
+          <th><b>From</b></th>
+          <th><b>To</b></th>
+          <th><b>Departure Time</b></th>
+          <th><b>Arrival Time</b></th>
+          <th><b>Economy Price</b></th>
+          <th><b>Business Price</b></th>
+        </tr>
+        <tbody>
+          {% for destination in destinations %}
+          <tr>
+            <td>{{ destination[0] }}</td>  
+            <td>{{ destination[1] }}</td>  
+            <td>{{ destination[2] }}</td>  
+            <td>{{ destination[3] }}</td>  
+            <td>{{ destination[4] }}</td>  
+            <td>{{ destination[5] }}</td>  
+          </tr>
+          {% endfor %}
+      </tbody>
+      </table>      
+        <div class="footer">
+          <a href="/termsconditions"><h5>Terms and Conditions</h5></a>
+          <a href="/aboutus"><h5>About us</h5></a>
+        </div>
+      </main>
+</body>
+</html>
+<!--Name: Drashti Samgi - Student Number: 24009943-->
